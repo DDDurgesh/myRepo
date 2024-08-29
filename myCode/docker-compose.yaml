@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:latest
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME}
+
+    ports:
+      - "3305:3306"
+
+    networks:
+      - myNetwork
+
+
+  myapp:
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+    depends_on:
+      - mysql
+
+    ports:
+      - "8088:8088"
+
+    environment:
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_NAME: ${DB_NAME}
+      DB_DIALECT: ${DB_DIALECT}
+
+    networks:
+      - myNetwork
+
+
+networks:
+  myNetwork:
+    driver: bridge
